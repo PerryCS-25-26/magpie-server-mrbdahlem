@@ -7,7 +7,7 @@ import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 
 public class MagpieServer implements HttpHandler {
-    public void handle(HttpExchange exchange) {
+    public void handle(HttpExchange exchange) throws IOException {
         final String requestMethod = exchange.getRequestMethod();
         String requestPath = exchange.getRequestURI().getPath();
 
