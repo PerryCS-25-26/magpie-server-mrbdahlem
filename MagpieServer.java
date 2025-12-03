@@ -1,4 +1,5 @@
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.util.Date;
 
@@ -7,6 +8,9 @@ import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 
 public class MagpieServer implements HttpHandler {
+    private Magpie maggie = new Magpie();
+
+    @Override
     public void handle(HttpExchange exchange) throws IOException {
         final String requestMethod = exchange.getRequestMethod();
         String requestPath = exchange.getRequestURI().getPath();
@@ -18,6 +22,14 @@ public class MagpieServer implements HttpHandler {
         if ("POST".equals(requestMethod) && "/chat".equals(requestPath)) {
             String statement = new String(exchange.getRequestBody().readAllBytes());
             System.out.println("User said: " + statement);
+            String response = maggie.getResponse(statement);
+            System.out.println("Magpie responded: " + response);
+
+            // Send the response back to the user
+            exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, response.length());
+            OutputStream responseBody = exchange.getResponseBody();
+            responseBody.write(response.getBytes());
+            responseBody.close();
         }
         else {
             // If the request is not a POST request, return a 405 Method Not Allowed error
